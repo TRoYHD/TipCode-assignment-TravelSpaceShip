@@ -1,0 +1,27 @@
+@media (max-width: 600px) {
+    .data-grid-container {
+      display: none;
+    }
+    
+    .mobile-grid-container {
+      display: block;
+      width: 100%;
+    }
+    
+    .mobile-grid-container .mobile-row {
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+    }
+  
+    .mobile-grid-container .mobile-cell {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+    }
+  
+    .mobile-grid-container .mobile-cell span {
+      display: inline-block;
+      width: 50%;
+    }
+  }
+  
