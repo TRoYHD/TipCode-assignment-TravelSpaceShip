@@ -12,15 +12,35 @@ const SpaceshipsListView = () => {
   const isMobile = useMediaQuery('(max-width:600px)');
 
   useEffect(() => {
-    axios.get('http://localhost:3000/spaceships')
-      .then(response => setSpaceships(response.data))
-      .catch(error => console.error('Error fetching spaceships:', error));
+    const fetchSpaceships = async () => {
+      const token = localStorage.getItem('token'); // Get the token from localStorage
+      try {
+        const response = await axios.get('http://localhost:3000/spaceships', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setSpaceships(response.data);
+      } catch (error) {
+        console.error('Error fetching spaceships:', error);
+      }
+    };
+
+    fetchSpaceships();
   }, []);
 
-  const handleDelete = (id) => {
-    axios.delete(`http://localhost:3000/spaceships/${id}`)
-      .then(() => setSpaceships(prevSpaceships => prevSpaceships.filter(ship => ship.SpaceshipID !== id)))
-      .catch(error => console.error('Error deleting spaceship:', error));
+  const handleDelete = async (id) => {
+    const token = localStorage.getItem('token'); // Get the token from localStorage
+    try {
+      await axios.delete(`http://localhost:3000/spaceships/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setSpaceships(prevSpaceships => prevSpaceships.filter(ship => ship.SpaceshipID !== id));
+    } catch (error) {
+      console.error('Error deleting spaceship:', error);
+    }
   };
 
   const columns = [
@@ -59,7 +79,7 @@ const SpaceshipsListView = () => {
     <Card>
       <CardHeader title="Spaceships" />
       <CardContent>
-        <Typography variant="body2"  color="textSecondary" gutterBottom>
+        <Typography variant="body2" color="textSecondary" gutterBottom>
           List of all spaceships
         </Typography>
         <Box display="flex" justifyContent="flex-end" mb={2}>

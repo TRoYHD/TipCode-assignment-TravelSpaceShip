@@ -56,6 +56,10 @@ exports.partialUpdateMission = async (req, res) => {
 
 exports.deleteMission = async (req, res) => {
   try {
+    const mission = await Mission.findById(req.params.id);
+    if (!mission) {
+      return res.status(404).json({ error: 'Mission not found' });
+    }
     await Mission.delete(req.params.id);
     res.json({ message: 'Mission deleted' });
   } catch (error) {

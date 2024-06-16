@@ -1,3 +1,4 @@
+
 const Spaceship = require('../models/Spaceship');
 const { validateSpaceship } = require('../utils/validate');
 const { handleError, handleValidationError } = require('../utils/errorHandler');
@@ -56,6 +57,10 @@ exports.partialUpdateSpaceship = async (req, res) => {
 
 exports.deleteSpaceship = async (req, res) => {
   try {
+    const spaceship = await Spaceship.findById(req.params.id);
+    if (!spaceship) {
+      return res.status(404).json({ error: 'Spaceship not found' });
+    }
     await Spaceship.delete(req.params.id);
     res.json({ message: 'Spaceship deleted' });
   } catch (error) {

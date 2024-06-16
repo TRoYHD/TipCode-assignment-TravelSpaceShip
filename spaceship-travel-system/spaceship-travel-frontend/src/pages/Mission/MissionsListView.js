@@ -12,15 +12,35 @@ const MissionsListView = () => {
   const isMobile = useMediaQuery('(max-width:600px)');
 
   useEffect(() => {
-    axios.get('http://localhost:3000/missions')
-      .then(response => setMissions(response.data))
-      .catch(error => console.error('Error fetching missions:', error));
+    const fetchMissions = async () => {
+      const token = localStorage.getItem('token'); // Get the token from localStorage
+      try {
+        const response = await axios.get('http://localhost:3000/missions', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setMissions(response.data);
+      } catch (error) {
+        console.error('Error fetching missions:', error);
+      }
+    };
+
+    fetchMissions();
   }, []);
 
-  const handleDelete = (id) => {
-    axios.delete(`http://localhost:3000/missions/${id}`)
-      .then(() => setMissions(prevMissions => prevMissions.filter(mission => mission.MissionID !== id)))
-      .catch(error => console.error('Error deleting mission:', error));
+  const handleDelete = async (id) => {
+    const token = localStorage.getItem('token'); // Get the token from localStorage
+    try {
+      await axios.delete(`http://localhost:3000/missions/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setMissions(prevMissions => prevMissions.filter(mission => mission.MissionID !== id));
+    } catch (error) {
+      console.error('Error deleting mission:', error);
+    }
   };
 
   const columns = [
@@ -59,7 +79,7 @@ const MissionsListView = () => {
     <Card>
       <CardHeader title="Missions" />
       <CardContent>
-        <Typography variant="body2"  color="textSecondary" gutterBottom>
+        <Typography variant="body2" color="textSecondary" gutterBottom>
           List of all missions
         </Typography>
         <Box display="flex" justifyContent="flex-end" mb={2}>

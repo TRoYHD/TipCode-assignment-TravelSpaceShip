@@ -56,6 +56,10 @@ exports.partialUpdateCrewMember = async (req, res) => {
 
 exports.deleteCrewMember = async (req, res) => {
   try {
+    const crewMember = await CrewMember.findById(req.params.id);
+    if (!crewMember) {
+      return res.status(404).json({ error: 'Crew Member not found' });
+    }
     await CrewMember.delete(req.params.id);
     res.json({ message: 'Crew Member deleted' });
   } catch (error) {

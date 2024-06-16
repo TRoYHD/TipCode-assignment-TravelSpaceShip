@@ -45,3 +45,40 @@ DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=your_password
 DB_NAME=spaceship_travel_system
+
+PUT Request Example
+For PUT, you must include all the required fields. Here’s how you can do it in Postman:
+
+Open Postman.
+Create a new request.
+Set the request type to PUT.
+Set the URL to http://localhost:3000/spaceships/3.
+Add Headers:
+Key: Content-Type, Value: application/json
+Set the Body to raw JSON:
+json
+Copy code
+{
+    "SpaceshipID": 3,
+    "Name": "Discovery",
+    "Capacity": 82,
+    "LaunchDate": "2024-03-09T22:00:00.000Z",
+    "Status": "Under Maintenance"
+}
+Click Send.
+PATCH Request Example
+For PATCH, you only need to include the fields you want to update. Here’s how you can do it in Postman:
+
+Open Postman.
+Create a new request.
+Set the request type to PATCH.
+Set the URL to http://localhost:3000/spaceships/3.
+Add Headers:
+Key: Content-Type, Value: application/json
+Set the Body to raw JSON:
+json
+Copy code
+{
+    "Status": "Under Maintenance"
+}
+Click Send.
