@@ -7,7 +7,7 @@ import { Sidebar, MobileSidebar } from './components/Sidebar';
 import SpaceshipPage from './pages/Spaceship/SpaceshipPage';
 import CrewMemberPage from './pages/CrewMember/CrewMemberPage';
 import MissionPage from './pages/Mission/MissionPage';
-import ErrorBoundary from './ErrorBoundary';
+import ErrorBoundary from './utils/ErrorBoundary';
 import { ThemeContextProvider } from './components/ThemeContext';
 import './styles.css';
 import { getToken,setToken} from './utils/setToken';
