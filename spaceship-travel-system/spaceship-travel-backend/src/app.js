@@ -40,6 +40,19 @@ app.post('/generate-token', (req, res) => {
   res.json({ token });
 });
 
+
+// Example route to set session data
+app.post('/set-session-data', (req, res) => {
+  req.session.data = req.body;
+  res.json({ message: 'Session data set' });
+});
+
+// Example route to get session data
+app.get('/get-session-data', (req, res) => {
+  const sessionData = req.session.data || {};
+  res.json(sessionData);
+});
+
 // Handle preflight requests
 app.options('*', cors());
 

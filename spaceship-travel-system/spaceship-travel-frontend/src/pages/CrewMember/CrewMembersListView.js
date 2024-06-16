@@ -57,7 +57,7 @@ const CrewMembersListView = () => {
     {
       field: 'edit',
       headerName: 'Edit',
-      flex: 1,
+      flex: 0.5,
       headerAlign: 'center',
       align: 'center',
       renderCell: (params) => (
@@ -69,7 +69,7 @@ const CrewMembersListView = () => {
     {
       field: 'delete',
       headerName: 'Delete',
-      flex: 1,
+      flex: 0.5,
       headerAlign: 'center',
       align: 'center',
       renderCell: (params) => (
@@ -86,7 +86,7 @@ const CrewMembersListView = () => {
         title={
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h6">Crew Members</Typography>
-            <Button variant="contained" color="primary" size="small" onClick={() => history.push('/crewmembers/create')}>
+            <Button variant="contained" color="primary" size="large" onClick={() => history.push('/crewmembers/create')}>
               Add Crew Member
             </Button>
           </Box>
