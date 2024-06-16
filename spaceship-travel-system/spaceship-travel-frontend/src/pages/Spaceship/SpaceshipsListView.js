@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Button, Card, CardContent, CardHeader, Typography, useTheme } from '@mui/material';
+import { Box, Button, Card, CardContent, CardHeader, Typography, useTheme, TextField } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 const SpaceshipsListView = () => {
   const [spaceships, setSpaceships] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const history = useHistory();
   const theme = useTheme();
   const isMobile = useMediaQuery('(max-width:600px)');
@@ -43,6 +44,10 @@ const SpaceshipsListView = () => {
     }
   };
 
+  const filteredSpaceships = spaceships.filter(ship =>
+    ship.Name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const columns = [
     { field: 'SpaceshipID', headerName: 'Spaceship ID', flex: 1, headerAlign: 'center', align: 'center' },
     { field: 'Name', headerName: 'Name', flex: 1, headerAlign: 'center', align: 'center' },
@@ -77,19 +82,31 @@ const SpaceshipsListView = () => {
 
   return (
     <Card>
-      <CardHeader title="Spaceships" />
+      <CardHeader
+        title={
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Typography variant="h6">Spaceships</Typography>
+            <Button variant="contained" color="primary" size="small" onClick={() => history.push('/spaceships/create')}>
+              Add Spaceship
+            </Button>
+          </Box>
+        }
+      />
       <CardContent>
         <Typography variant="body2" color="textSecondary" gutterBottom>
           List of all spaceships
         </Typography>
-        <Box display="flex" justifyContent="flex-end" mb={2}>
-          <Button variant="contained" color="primary" size="small" onClick={() => history.push('/spaceships/create')}>
-            Add Spaceship
-          </Button>
-        </Box>
-        <Box className="data-grid-container" sx={{ height: 400, width: '100%', display: isMobile ? 'none' : 'block' }}>
+        <TextField
+          label="Search"
+          variant="outlined"
+          fullWidth
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          sx={{ mb: 2 }}
+        />
+        <Box className="data-grid-container" sx={{ height: 600, width: '100%', display: isMobile ? 'none' : 'block' }}>
           <DataGrid
-            rows={spaceships}
+            rows={filteredSpaceships}
             columns={columns}
             pageSize={10}
             autoHeight
@@ -117,7 +134,7 @@ const SpaceshipsListView = () => {
         </Box>
         {isMobile && (
           <Box className="mobile-grid-container">
-            {spaceships.map((ship) => (
+            {filteredSpaceships.map((ship) => (
               <Box className="mobile-row" key={ship.SpaceshipID}>
                 <Box className="mobile-cell">
                   <span>Spaceship ID:</span>
@@ -140,10 +157,10 @@ const SpaceshipsListView = () => {
                   <span>{ship.Status}</span>
                 </Box>
                 <Box className="mobile-cell" sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Button variant="contained" color="primary" size="small" onClick={() => history.push(`/spaceships/edit/${ship.SpaceshipID}`)}>
+                  <Button variant="contained" color="primary" size="small" sx={{ minWidth: '60px' }} onClick={() => history.push(`/spaceships/edit/${ship.SpaceshipID}`)}>
                     Edit
                   </Button>
-                  <Button variant="contained" color="secondary" size="small" onClick={() => handleDelete(ship.SpaceshipID)}>
+                  <Button variant="contained" color="secondary" size="small" sx={{ minWidth: '60px' }} onClick={() => handleDelete(ship.SpaceshipID)}>
                     Delete
                   </Button>
                 </Box>

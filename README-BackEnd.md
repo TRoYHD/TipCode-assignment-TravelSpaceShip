@@ -29,7 +29,7 @@ This API provides CRUD operations for managing a spaceship travel system to Moon
 - `DELETE /missions/:id` - Delete a mission.
 
 ## Session Management
-Session management is implemented using `express-session`.
+Session management is implemented using `express-session`and protected Routes using JWT.
 
 ## Input Validation and Error Handling
 Input validation is done using `Joi`, and error handling is implemented in the controllers.
@@ -59,11 +59,10 @@ Set the Body to raw JSON:
 json
 Copy code
 {
-    "SpaceshipID": 3,
-    "Name": "Discovery",
-    "Capacity": 82,
-    "LaunchDate": "2024-03-09T22:00:00.000Z",
-    "Status": "Under Maintenance"
+    "name": "Discovery",
+    "capacity": 82,
+    "launchDate": "2024-03-09T22:00:00.000Z",
+    "status": "Under Maintenance"                 // you can choose Ready ,Under Maintenance , In mission  those are the only can added otherwise it will gives error back
 }
 Click Send.
 PATCH Request Example
