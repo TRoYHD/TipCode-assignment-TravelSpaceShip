@@ -35,7 +35,7 @@ cd spaceship-travel-backend
 npm install
 
 # Frontend
-cd ../spaceship-travel-frontend
+cd spaceship-travel-frontend
 npm install
 ```
 
