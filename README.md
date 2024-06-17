@@ -73,6 +73,7 @@ Now you can use this token in the Authorization header for protected routes:
 ## Testing in PostsMan   
 
 ### I have included a doumentation for postman (https://documenter.getpostman.com/view/27333474/2sA3XSALpk#9c9bc1c2-f0a0-4091-9a23-725ea4e979ca)
+### Remember to get the token from the broswer local stroage and paste in postman so you can acceses the api before doing any operation
 
 for Testing purpose in postman you need the token , you can get the token when you open the front-end page (you might need to refresh the page before doing that) of the app and press right click with mouse and inspect and then go to application storage to local storage and you will find there the Token that is need it for testing in the postman , note open postman  go to Authorization and choose the type to be Bearer Token then place the token After that you can use the protected routes and use it as much as you want.
 ```bash
