@@ -68,7 +68,7 @@ const validateMission = (data) => {
       'any.only': 'Destination must be one of: Moon, Mars, Jupiter',
       'any.required': 'Destination is required'
     }), // destination must be one of the specified values and is required with custom messages
-    launchDate: Joi.date().required().messages({
+   launchDate: Joi.date().iso().required().messages({
       'date.base': 'Launch Date must be a valid date',
       'any.required': 'Launch Date is required'
     }), // launch date must be a date and is required with custom messages

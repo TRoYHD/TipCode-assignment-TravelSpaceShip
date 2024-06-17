@@ -1,4 +1,5 @@
 const Mission = require('../models/Mission');
+const Spaceship = require('../models/Spaceship'); // Import the Spaceship model
 const { validateMission } = require('../utils/validate');
 const { handleError, handleValidationError } = require('../utils/errorHandler');
 
@@ -29,6 +30,11 @@ exports.createMission = async (req, res) => {
   if (error) return handleValidationError(res, error);
 
   try {
+    const spaceship = await Spaceship.findById(req.body.spaceshipId);
+    if (!spaceship) {
+      return res.status(400).json({ error: 'Invalid Spaceship ID. The spaceship does not exist.' });
+    }
+
     const missionId = await Mission.create(req.body);
     res.status(201).json({ MissionID: missionId });
   } catch (error) {
@@ -42,8 +48,13 @@ exports.updateMission = async (req, res) => {
   if (error) return handleValidationError(res, error);
 
   try {
+    const spaceship = await Spaceship.findById(req.body.spaceshipId);
+    if (!spaceship) {
+      return res.status(400).json({ error: 'Invalid Spaceship ID. The spaceship does not exist.' });
+    }
+
     await Mission.update(req.params.id, req.body);
-    res.json({ message: 'Mission updated' });
+    res.json({ message: 'Mission updated successfully' });
   } catch (error) {
     handleError(res, error);
   }
@@ -53,7 +64,7 @@ exports.updateMission = async (req, res) => {
 exports.partialUpdateMission = async (req, res) => {
   try {
     await Mission.partialUpdate(req.params.id, req.body);
-    res.json({ message: 'Mission partially updated' });
+    res.json({ message: 'Mission partially updated successfully' });
   } catch (error) {
     handleError(res, error);
   }
@@ -66,7 +77,7 @@ exports.deleteMission = async (req, res) => {
     if (!mission) return res.status(404).json({ error: 'Mission not found' });
 
     await Mission.delete(req.params.id);
-    res.json({ message: 'Mission deleted' });
+    res.json({ message: 'Mission deleted successfully' });
   } catch (error) {
     handleError(res, error);
   }
