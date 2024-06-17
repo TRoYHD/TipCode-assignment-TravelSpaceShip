@@ -83,6 +83,9 @@ for Testing purpose in postman you need the token , you can get the token when y
 curl -H "Authorization: Bearer $TOKEN" <your_protected_route>
 ```
 
+![Diagram](https://github.com/TRoYHD/TipCode-assignment-TravelSpaceShip/blob/main/spaceship-travel-system/spaceship-travel-frontend/public/api.png)
+
+
 ## API Endpoints
 
 ### Spaceships
