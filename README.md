@@ -2,6 +2,51 @@
 
 This project is a Spaceship Travel System application built using Node.js, Express, and React. It provides functionalities to manage spaceships, crew members, and missions. The application uses JWT for authentication and supports CORS for cross-origin requests.
 
+spaceship-travel-system/
+│
+├── spaceship-travel-backend/
+│   ├── src/
+│   │   ├── controllers/
+│   │   │   ├── crewMemberController.js
+│   │   │   ├── missionController.js
+│   │   │   ├── spaceshipController.js
+│   │   ├── models/
+│   │   │   ├── CrewMember.js
+│   │   │   ├── Mission.js
+│   │   │   ├── Spaceship.js
+│   │   ├── routes/
+│   │   │   ├── crewmembers.js
+│   │   │   ├── missions.js
+│   │   │   ├── spaceships.js
+│   │   ├── utils/
+│   │   │   ├── db.js
+│   │   │   ├── validate.js
+│   │   │   ├── errorHandler.js
+│   │   ├── app.js
+│   │   ├── server.js
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── README.md
+│
+├── spaceship-travel-frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── CrewMemberFormView.js
+│   │   │   ├── MissionFormView.js
+│   │   │   ├── SpaceshipFormView.js
+│   │   ├── pages/
+│   │   │   ├── CrewMembersPage.js
+│   │   │   ├── MissionsPage.js
+│   │   │   ├── SpaceshipsPage.js
+│   │   ├── App.js
+│   │   ├── index.js
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── README.md
+│
+├── README.md
+
+
 ## Installation
 
 1. **Clone the repository:**
