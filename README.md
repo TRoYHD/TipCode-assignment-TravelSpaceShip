@@ -41,7 +41,8 @@ npm install
 . **Set up the database:**
    - Start your MySQL server.
    - Create the database and tables by running the following SQL script in your MySQL CLI:
-   //////
+   ///////////////////////////
+
     -- Create the database
 CREATE DATABASE Spaceship_Travel_System;
 
