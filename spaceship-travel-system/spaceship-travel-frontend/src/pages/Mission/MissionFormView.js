@@ -12,23 +12,20 @@ const formatDate = (date) => {
   return dayjs(date).format('YYYY-MM-DD');
 };
 
-// Parsing function to ensure the date is in the correct format for validation
-const parseDateString = (value, originalValue) => {
-  const parsedDate = dayjs(originalValue, 'YYYY-MM-DD', true);
-  return parsedDate.isValid() ? parsedDate.toDate() : new Date(NaN);
-};
-
+// Define validation schema using yup with custom error messages
 const schema = yup.object().shape({
-  spaceshipId: yup.string().required('Spaceship ID is required'),
-  destination: yup.string().required('Destination is required').oneOf(['Moon', 'Mars', 'Jupiter'], 'Destination must be one of: Moon, Mars, Jupiter'),
-  launchDate: yup.date().required('Launch Date is required').transform(parseDateString),
-  duration: yup.number().required('Duration is required').positive().integer(),
+  spaceshipId: yup.string().required('Please select a spaceship.'),
+  destination: yup.string().required('Please select a destination.').oneOf(['Moon', 'Mars', 'Jupiter'], 'Destination must be one of: Moon, Mars, Jupiter'),
+  launchDate: yup.string().required('Please enter the launch date.').test('valid-date', 'Please enter a valid date in the format YYYY-MM-DD.', (value) => {
+    return dayjs(value, 'YYYY-MM-DD', true).isValid();
+  }),
+  duration: yup.number().typeError('Please enter a valid number for duration.').required('Duration is required.').positive('Duration must be a positive number.').integer('Duration must be an integer.'),
 });
 
 const MissionFormView = ({ mode }) => {
   const { id } = useParams();
   const history = useHistory();
-  const { handleSubmit, control, reset } = useForm({
+  const { handleSubmit, control, reset, setError } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       spaceshipId: '',
@@ -42,14 +39,14 @@ const MissionFormView = ({ mode }) => {
 
   useEffect(() => {
     // Fetch available spaceships for the dropdown
-    axios.get('http://localhost:3000/spaceships')
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}/spaceships`)
       .then(response => setSpaceships(response.data))
       .catch(error => console.error('Error fetching spaceships:', error));
   }, []);
 
   useEffect(() => {
     if (mode === 'edit') {
-      axios.get(`http://localhost:3000/missions/${id}`)
+      axios.get(`${process.env.REACT_APP_API_BASE_URL}/missions/${id}`)
         .then(response => {
           const { SpaceshipID, Destination, LaunchDate, Duration } = response.data;
           const transformedData = {
@@ -71,12 +68,21 @@ const MissionFormView = ({ mode }) => {
       launchDate: formatDate(data.launchDate),
     };
     const request = mode === 'create'
-      ? axios.post('http://localhost:3000/missions', formattedData)
-      : axios.put(`http://localhost:3000/missions/${id}`, formattedData);
+      ? axios.post(`${process.env.REACT_APP_API_BASE_URL}/missions`, formattedData)
+      : axios.put(`${process.env.REACT_APP_API_BASE_URL}/missions/${id}`, formattedData);
 
     request
       .then(() => history.push('/missions'))
-      .catch(error => console.error('Error saving mission:', error))
+      .catch(error => {
+        if (error.response && error.response.data) {
+          if (error.response.data.error === 'Spaceship ID does not exist.') {
+            setError('spaceshipId', { type: 'manual', message: 'Spaceship ID does not exist.' });
+          } else if (error.response.data.error.includes('Incorrect date value')) {
+            setError('launchDate', { type: 'manual', message: 'Please enter a valid date in the format YYYY-MM-DD.' });
+          }
+        }
+        console.error('Error saving mission:', error);
+      })
       .finally(() => setLoading(false));
   };
 
@@ -92,7 +98,7 @@ const MissionFormView = ({ mode }) => {
               render={({ field, fieldState }) => (
                 <TextField 
                   {...field} 
-                  label="Spaceship ID" 
+                  label="Spaceship" 
                   fullWidth 
                   select
                   error={!!fieldState.error} 
@@ -102,7 +108,7 @@ const MissionFormView = ({ mode }) => {
                 >
                   {spaceships.map((spaceship) => (
                     <MenuItem key={spaceship.SpaceshipID} value={spaceship.SpaceshipID}>
-                      {spaceship.SpaceshipID}
+                      {spaceship.Name}
                     </MenuItem>
                   ))}
                 </TextField>

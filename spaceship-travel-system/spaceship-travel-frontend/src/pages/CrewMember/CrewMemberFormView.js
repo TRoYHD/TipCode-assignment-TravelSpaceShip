@@ -6,8 +6,24 @@ import axios from 'axios';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 
+// Define validation schema using yup with custom error messages
 const schema = yup.object().shape({
-  name: yup.string().required('Name is required'),
+  name: yup.string().required('Please enter the name of the crew member.')
+    .test('unique-name', 'This name is already taken.', async function(value) {
+      if (!value) return true; // Skip validation if value is not provided
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/crewmembers/check-name`, {
+          params: {
+            name: value,
+            excludeId: this.options.context.id // Exclude the current crew member being edited
+          }
+        });
+        return response.data.isUnique;
+      } catch (error) {
+        console.error('Error checking crew member name uniqueness:', error);
+        return false; // Return false in case of an error
+      }
+    }),
   role: yup.string().required('Role is required'),
   experienceLevel: yup
     .string()
@@ -16,7 +32,16 @@ const schema = yup.object().shape({
   assignedSpaceshipID: yup
     .number()
     .nullable()
-    .transform((value, originalValue) => (typeof originalValue === 'string' && originalValue.trim() === '' ? null : value)),
+    .transform((value, originalValue) => (typeof originalValue === 'string' && originalValue.trim() === '' ? null : value))
+    .test('exists', 'Assigned spaceship ID does not exist.', async function(value) {
+      if (!value) return true; // Skip validation if value is not provided
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/spaceships/${value}`);
+        return response.status === 200; // Return true if the spaceship exists
+      } catch (error) {
+        return false; // Return false if the spaceship does not exist
+      }
+    })
 });
 
 const CrewMemberFormView = ({ mode }) => {
@@ -30,12 +55,13 @@ const CrewMemberFormView = ({ mode }) => {
       experienceLevel: '',
       assignedSpaceshipID: '',
     },
+    context: { id }
   });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (mode === 'edit') {
-      axios.get(`http://localhost:3000/crewmembers/${id}`)
+      axios.get(`${process.env.REACT_APP_API_BASE_URL}/crewmembers/${id}`)
         .then(response => {
           const { Name, Role, ExperienceLevel, AssignedSpaceshipID } = response.data;
           const transformedData = {
@@ -53,8 +79,8 @@ const CrewMemberFormView = ({ mode }) => {
   const onSubmit = (data) => {
     setLoading(true);
     const request = mode === 'create'
-      ? axios.post('http://localhost:3000/crewmembers', data)
-      : axios.put(`http://localhost:3000/crewmembers/${id}`, data);
+      ? axios.post(`${process.env.REACT_APP_API_BASE_URL}/crewmembers`, data)
+      : axios.put(`${process.env.REACT_APP_API_BASE_URL}/crewmembers/${id}`, data);
 
     request
       .then(() => history.push('/crewmembers'))

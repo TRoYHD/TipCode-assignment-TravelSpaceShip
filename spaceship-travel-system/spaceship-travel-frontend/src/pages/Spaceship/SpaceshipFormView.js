@@ -12,23 +12,43 @@ const formatDate = (date) => {
   return dayjs(date).format('YYYY-MM-DD');
 };
 
-// Parsing function to ensure the date is in the correct format for validation
-const parseDateString = (value, originalValue) => {
-  const parsedDate = dayjs(originalValue, 'YYYY-MM-DD', true);
-  return parsedDate.isValid() ? parsedDate.toDate() : new Date(NaN);
-};
-
+// Define validation schema using yup with custom error messages
 const schema = yup.object().shape({
-  name: yup.string().required('Name is required'),
-  capacity: yup.number().required('Capacity is required').positive().integer(),
-  launchDate: yup.date().required('Launch Date is required').transform(parseDateString),
-  status: yup.string().required('Status is required').oneOf(['Ready', 'In Mission', 'Under Maintenance'], 'Status must be one of: Ready, In Mission, Under Maintenance'),
+  name: yup.string().required('Please enter the name of the spaceship.')
+    .test('unique-name', 'This name is already taken.', async function(value) {
+      if (!value) return true; // Skip validation if value is not provided
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/spaceships/check-name`, {
+          params: {
+            name: value,
+            excludeId: this.options.context.id // Exclude the current spaceship being edited
+          }
+        });
+        return response.data.isUnique;
+      } catch (error) {
+        console.error('Error checking spaceship name uniqueness:', error);
+        return false; // Return false in case of an error
+      }
+    }),
+  capacity: yup.number()
+    .typeError('Please enter a valid number for capacity.')
+    .required('Capacity is required.')
+    .positive('Capacity must be a positive number.')
+    .integer('Capacity must be an integer.'),
+  launchDate: yup.string()
+    .required('Please enter the launch date.')
+    .test('valid-date', 'Please enter a valid date in the format YYYY-MM-DD.', (value) => {
+      return dayjs(value, 'YYYY-MM-DD', true).isValid();
+    }),
+  status: yup.string()
+    .required('Please select the status of the spaceship.')
+    .oneOf(['Ready', 'In Mission', 'Under Maintenance'], 'Status must be one of: Ready, In Mission, Under Maintenance'),
 });
 
 const SpaceshipFormView = ({ mode }) => {
   const { id } = useParams();
   const history = useHistory();
-  const { handleSubmit, control, reset } = useForm({
+  const { handleSubmit, control, reset, setError } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       name: '',
@@ -36,12 +56,13 @@ const SpaceshipFormView = ({ mode }) => {
       launchDate: '',
       status: '',
     },
+    context: { id } // Pass the ID to the context for unique name validation
   });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (mode === 'edit') {
-      axios.get(`http://localhost:3000/spaceships/${id}`)
+      axios.get(`${process.env.REACT_APP_API_BASE_URL}/spaceships/${id}`)
         .then(response => {
           const { Name, Capacity, LaunchDate, Status } = response.data;
           const transformedData = {
@@ -63,12 +84,21 @@ const SpaceshipFormView = ({ mode }) => {
       launchDate: formatDate(data.launchDate),
     };
     const request = mode === 'create'
-      ? axios.post('http://localhost:3000/spaceships', formattedData)
-      : axios.put(`http://localhost:3000/spaceships/${id}`, formattedData);
+      ? axios.post(`${process.env.REACT_APP_API_BASE_URL}/spaceships`, formattedData)
+      : axios.put(`${process.env.REACT_APP_API_BASE_URL}/spaceships/${id}`, formattedData);
 
     request
       .then(() => history.push('/spaceships'))
-      .catch(error => console.error('Error saving spaceship:', error))
+      .catch(error => {
+        if (error.response && error.response.data) {
+          if (error.response.data.error === 'Spaceship ID does not exist.') {
+            setError('spaceshipId', { type: 'manual', message: 'Spaceship ID does not exist.' });
+          } else if (error.response.data.error.includes('Incorrect date value')) {
+            setError('launchDate', { type: 'manual', message: 'Please enter a valid date in the format YYYY-MM-DD.' });
+          }
+        }
+        console.error('Error saving spaceship:', error);
+      })
       .finally(() => setLoading(false));
   };
 

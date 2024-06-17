@@ -2,7 +2,16 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Button, Card, CardContent, CardHeader, Typography, useTheme, TextField } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+  useTheme,
+  TextField
+} from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 const SpaceshipsListView = () => {
@@ -13,10 +22,11 @@ const SpaceshipsListView = () => {
   const isMobile = useMediaQuery('(max-width:600px)');
 
   useEffect(() => {
+    // Fetch spaceships data from API on component mount
     const fetchSpaceships = async () => {
-      const token = localStorage.getItem('token'); // Get the token from localStorage
+      const token = localStorage.getItem('token');
       try {
-        const response = await axios.get('http://localhost:3000/spaceships', {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/spaceships`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -28,26 +38,34 @@ const SpaceshipsListView = () => {
     };
 
     fetchSpaceships();
-  }, []);
+  }, []); // Empty dependency array ensures this effect runs only once on mount
 
+  // Delete spaceship handler
   const handleDelete = async (id) => {
-    const token = localStorage.getItem('token'); // Get the token from localStorage
+    const token = localStorage.getItem('token');
     try {
-      await axios.delete(`http://localhost:3000/spaceships/${id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/spaceships/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
+      // Update spaceships state after deletion
       setSpaceships(prevSpaceships => prevSpaceships.filter(ship => ship.SpaceshipID !== id));
     } catch (error) {
       console.error('Error deleting spaceship:', error);
     }
   };
 
+  // Filter spaceships based on search term
   const filteredSpaceships = spaceships.filter(ship =>
-    ship.Name.toLowerCase().includes(searchTerm.toLowerCase())
+    ship.SpaceshipID.toString().includes(searchTerm) ||
+    ship.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    ship.Capacity.toString().includes(searchTerm) ||
+    ship.LaunchDate.includes(searchTerm) ||
+    ship.Status.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Columns configuration for the DataGrid
   const columns = [
     { field: 'SpaceshipID', headerName: 'Spaceship ID', flex: 1, headerAlign: 'center', align: 'center' },
     { field: 'Name', headerName: 'Name', flex: 1, headerAlign: 'center', align: 'center' },
@@ -104,12 +122,14 @@ const SpaceshipsListView = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           sx={{ mb: 2 }}
         />
+        {/* Container for desktop view, adjusts height based on content */}
         <Box className="data-grid-container" sx={{ height: 600, width: '100%', display: isMobile ? 'none' : 'block' }}>
           <DataGrid
             rows={filteredSpaceships}
             columns={columns}
-            pageSize={10}
-            autoHeight
+            pagination
+            autoPageSize // Automatically adjusts pageSize based on available space
+            disableSelectionOnClick
             getRowId={(row) => row.SpaceshipID}
             sx={{
               '& .MuiDataGrid-root': {
@@ -128,10 +148,11 @@ const SpaceshipsListView = () => {
               '& .MuiDataGrid-columnHeaderTitle': {
                 textAlign: 'center',
                 fontSize: '1rem'
-              }
+              },
             }}
           />
         </Box>
+        {/* Container for mobile view */}
         {isMobile && (
           <Box className="mobile-grid-container">
             {filteredSpaceships.map((ship) => (

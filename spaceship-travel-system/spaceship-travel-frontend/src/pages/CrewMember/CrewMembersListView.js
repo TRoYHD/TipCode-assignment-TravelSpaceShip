@@ -5,49 +5,58 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Box, Button, Card, CardContent, CardHeader, Typography, useTheme, TextField } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+// Define the CrewMembersListView component
 const CrewMembersListView = () => {
-  const [crewMembers, setCrewMembers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const history = useHistory();
-  const theme = useTheme();
-  const isMobile = useMediaQuery('(max-width:600px)');
+  const [crewMembers, setCrewMembers] = useState([]); // State to store crew members data
+  const [searchTerm, setSearchTerm] = useState(''); // State to store search term
+  const history = useHistory(); // Get the history object for navigation
+  const theme = useTheme(); // Get the current theme
+  const isMobile = useMediaQuery('(max-width:600px)'); // Check if the device is mobile
 
+  // Fetch crew members data from the server
   useEffect(() => {
     const fetchCrewMembers = async () => {
       const token = localStorage.getItem('token'); // Get the token from localStorage
       try {
-        const response = await axios.get('http://localhost:3000/crewmembers', {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/crewmembers`, {
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}` // Set the authorization header
           }
         });
-        setCrewMembers(response.data);
+        setCrewMembers(response.data); // Set the fetched data to state
       } catch (error) {
-        console.error('Error fetching crew members:', error);
+        console.error('Error fetching crew members:', error); // Log error if fetching fails
       }
     };
 
-    fetchCrewMembers();
+    fetchCrewMembers(); // Call the fetch function
   }, []);
 
+  // Handle deletion of a crew member
   const handleDelete = async (id) => {
     const token = localStorage.getItem('token'); // Get the token from localStorage
     try {
-      await axios.delete(`http://localhost:3000/crewmembers/${id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/crewmembers/${id}`, {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}` // Set the authorization header
         }
       });
-      setCrewMembers(prevCrewMembers => prevCrewMembers.filter(member => member.CrewMemberID !== id));
+      setCrewMembers(prevCrewMembers => prevCrewMembers.filter(member => member.CrewMemberID !== id)); // Remove the deleted crew member from state
     } catch (error) {
-      console.error('Error deleting crew member:', error);
+      console.error('Error deleting crew member:', error); // Log error if deletion fails
     }
   };
 
+  // Filter crew members based on search term
   const filteredCrewMembers = crewMembers.filter(member =>
-    member.Name.toLowerCase().includes(searchTerm.toLowerCase())
+    member.CrewMemberID.toString().includes(searchTerm) ||
+    member.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    member.Role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    member.ExperienceLevel.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (member.AssignedSpaceshipID && member.AssignedSpaceshipID.toString().includes(searchTerm))
   );
 
+  // Define columns for the data grid
   const columns = [
     { field: 'CrewMemberID', headerName: 'Crew Member ID', flex: 1, headerAlign: 'center', align: 'center' },
     { field: 'Name', headerName: 'Name', flex: 1, headerAlign: 'center', align: 'center' },
@@ -108,8 +117,9 @@ const CrewMembersListView = () => {
           <DataGrid
             rows={filteredCrewMembers}
             columns={columns}
-            pageSize={10}
-            autoHeight
+            pagination
+            autoPageSize 
+            disableSelectionOnClick
             getRowId={(row) => row.CrewMemberID}
             sx={{
               '& .MuiDataGrid-root': {

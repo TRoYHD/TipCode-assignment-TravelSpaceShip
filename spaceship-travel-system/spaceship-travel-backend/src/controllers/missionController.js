@@ -2,6 +2,7 @@ const Mission = require('../models/Mission');
 const { validateMission } = require('../utils/validate');
 const { handleError, handleValidationError } = require('../utils/errorHandler');
 
+// Get all missions from the database
 exports.getAllMissions = async (req, res) => {
   try {
     const missions = await Mission.findAll();
@@ -11,6 +12,7 @@ exports.getAllMissions = async (req, res) => {
   }
 };
 
+// Get a specific mission by its ID
 exports.getMissionById = async (req, res) => {
   try {
     const mission = await Mission.findById(req.params.id);
@@ -21,6 +23,7 @@ exports.getMissionById = async (req, res) => {
   }
 };
 
+// Create a new mission
 exports.createMission = async (req, res) => {
   const { error } = validateMission(req.body);
   if (error) return handleValidationError(res, error);
@@ -33,6 +36,7 @@ exports.createMission = async (req, res) => {
   }
 };
 
+// Update an existing mission
 exports.updateMission = async (req, res) => {
   const { error } = validateMission(req.body);
   if (error) return handleValidationError(res, error);
@@ -45,6 +49,7 @@ exports.updateMission = async (req, res) => {
   }
 };
 
+// Partially update an existing mission
 exports.partialUpdateMission = async (req, res) => {
   try {
     await Mission.partialUpdate(req.params.id, req.body);
@@ -54,12 +59,12 @@ exports.partialUpdateMission = async (req, res) => {
   }
 };
 
+// Delete a mission by its ID
 exports.deleteMission = async (req, res) => {
   try {
     const mission = await Mission.findById(req.params.id);
-    if (!mission) {
-      return res.status(404).json({ error: 'Mission not found' });
-    }
+    if (!mission) return res.status(404).json({ error: 'Mission not found' });
+
     await Mission.delete(req.params.id);
     res.json({ message: 'Mission deleted' });
   } catch (error) {
