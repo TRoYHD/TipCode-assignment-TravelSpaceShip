@@ -1,6 +1,7 @@
 const Spaceship = require('../models/Spaceship');
 const { validateSpaceship } = require('../utils/validate');
 const { handleError, handleValidationError } = require('../utils/errorHandler');
+const Mission = require('../models/Mission');  
 
 // Get all spaceships from the database
 exports.getAllSpaceships = async (req, res) => {
@@ -87,6 +88,13 @@ exports.deleteSpaceship = async (req, res) => {
     if (!spaceship) {
       return res.status(404).json({ error: 'Spaceship not found' });
     }
+
+    // Check if there are any missions associated with this spaceship
+    const associatedMissions = await Mission.findBySpaceshipId(req.params.id);
+    if (associatedMissions.length > 0) {
+      return res.status(400).json({ error: 'Cannot delete spaceship. There are missions associated with this spaceship.' });
+    }
+
     await Spaceship.delete(req.params.id);
     res.json({ message: 'Spaceship deleted' });
   } catch (error) {

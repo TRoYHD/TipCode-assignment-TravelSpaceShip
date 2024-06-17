@@ -48,7 +48,7 @@ const schema = yup.object().shape({
 const SpaceshipFormView = ({ mode }) => {
   const { id } = useParams();
   const history = useHistory();
-  const { handleSubmit, control, reset, setError } = useForm({
+  const { handleSubmit, control, reset, setError, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       name: '',
@@ -95,6 +95,8 @@ const SpaceshipFormView = ({ mode }) => {
             setError('spaceshipId', { type: 'manual', message: 'Spaceship ID does not exist.' });
           } else if (error.response.data.error.includes('Incorrect date value')) {
             setError('launchDate', { type: 'manual', message: 'Please enter a valid date in the format YYYY-MM-DD.' });
+          } else if (error.response.data.error.includes('Cannot delete or update a parent row')) {
+            setError('general', { type: 'manual', message: 'Cannot delete or update this spaceship because there are associated missions.' });
           }
         }
         console.error('Error saving spaceship:', error);
@@ -182,6 +184,9 @@ const SpaceshipFormView = ({ mode }) => {
                 </TextField>
               )}
             />
+          </Box>
+          <Box mb={2}>
+            <p style={{ color: 'red' }}>{errors.general?.message}</p>
           </Box>
           <Box display="flex" justifyContent="flex-end">
             <Button variant="contained" color="primary" type="submit" disabled={loading}>
