@@ -18,7 +18,8 @@ DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=your_password
 DB_NAME=spaceship_travel_system
-
+SECRET_KEY=TopSecretKey
+JWT_SECRET=TopTopSecretKey
 ```
 <!-- ///////////// -->
 2. **Navigate to the project directory:**
