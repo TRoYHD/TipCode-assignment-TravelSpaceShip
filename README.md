@@ -2,6 +2,16 @@
 
 This project is a Spaceship Travel System application built using Node.js, Express, and React. It provides functionalities to manage spaceships, crew members, and missions. The application uses JWT for authentication and supports CORS for cross-origin requests.
 
+# File structure
+![Diagram](https://github.com/TRoYHD/TipCode-assignment-TravelSpaceShip/blob/main/spaceship-travel-system/spaceship-travel-frontend/public/Comopent%20Struc.png)
+
+# DataBase Design
+![Diagram](https://github.com/TRoYHD/TipCode-assignment-TravelSpaceShip/blob/main/spaceship-travel-system/spaceship-travel-frontend/public/DataBase%20Design.png)
+
+
+![Diagram](https://github.com/TRoYHD/TipCode-assignment-TravelSpaceShip/blob/main/spaceship-travel-system/spaceship-travel-frontend/public/spaceship%20approximate%20look.png)
+
+
 ## Installation
 
 1. **Clone the repository:**
