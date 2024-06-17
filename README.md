@@ -5,7 +5,7 @@ This project is a Spaceship Travel System application built using Node.js, Expre
 # File structure
 ![Diagram](https://github.com/TRoYHD/TipCode-assignment-TravelSpaceShip/blob/main/spaceship-travel-system/spaceship-travel-frontend/public/Comopent%20Struc.png)
 
-# DataBase
+# DataBase Design
 ![Diagram](https://github.com/TRoYHD/TipCode-assignment-TravelSpaceShip/blob/main/spaceship-travel-system/spaceship-travel-frontend/public/DataBase%20Design.png)
 
 
