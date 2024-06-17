@@ -42,23 +42,63 @@ npm install
    - Start your MySQL server.
    - Create the database and tables by running the following SQL script in your MySQL CLI:
    ///////////////////////////start from here///////////////////
--- Create the database CREATE DATABASE Spaceship_Travel_System;
 
--- Use the database USE Spaceship_Travel_System;
+-- Create the database
+CREATE DATABASE Spaceship_Travel_System;
 
--- Create the Spaceships table CREATE TABLE Spaceships ( SpaceshipID INT PRIMARY KEY AUTO_INCREMENT, Name VARCHAR(100) NOT NULL, Capacity INT NOT NULL, LaunchDate DATE NOT NULL, Status ENUM('Ready', 'In Mission', 'Under Maintenance') NOT NULL );
+-- Use the database
+USE Spaceship_Travel_System;
 
--- Create the CrewMembers table CREATE TABLE CrewMembers ( CrewMemberID INT PRIMARY KEY AUTO_INCREMENT, Name VARCHAR(100) NOT NULL, Role VARCHAR(50) NOT NULL, ExperienceLevel ENUM('Beginner', 'Intermediate', 'Expert') NOT NULL, AssignedSpaceshipID INT NULL, FOREIGN KEY (AssignedSpaceshipID) REFERENCES Spaceships(SpaceshipID) );
+-- Create the Spaceships table
+CREATE TABLE Spaceships (
+    SpaceshipID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100) NOT NULL,
+    Capacity INT NOT NULL,
+    LaunchDate DATE NOT NULL,
+    Status ENUM('Ready', 'In Mission', 'Under Maintenance') NOT NULL
+);
 
--- Create the Missions table CREATE TABLE Missions ( MissionID INT PRIMARY KEY AUTO_INCREMENT, SpaceshipID INT NOT NULL, Destination ENUM('Moon', 'Mars', 'Jupiter') NOT NULL, LaunchDate DATE NOT NULL, Duration INT NOT NULL, FOREIGN KEY (SpaceshipID) REFERENCES Spaceships(SpaceshipID) );
+-- Create the CrewMembers table
+CREATE TABLE CrewMembers (
+    CrewMemberID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100) NOT NULL,
+    Role VARCHAR(50) NOT NULL,
+    ExperienceLevel ENUM('Beginner', 'Intermediate', 'Expert') NOT NULL,
+    AssignedSpaceshipID INT NULL,
+    FOREIGN KEY (AssignedSpaceshipID) REFERENCES Spaceships(SpaceshipID)
+);
 
--- Insert some sample data into Spaceships INSERT INTO Spaceships (Name, Capacity, LaunchDate, Status) VALUES ('Apollo', 5, '2024-01-01', 'Ready'), ('Enterprise', 10, '2024-02-15', 'In Mission'), ('Discovery', 8, '2024-03-10', 'Under Maintenance');
+-- Create the Missions table
+CREATE TABLE Missions (
+    MissionID INT PRIMARY KEY AUTO_INCREMENT,
+    SpaceshipID INT NOT NULL,
+    Destination ENUM('Moon', 'Mars', 'Jupiter') NOT NULL,
+    LaunchDate DATE NOT NULL,
+    Duration INT NOT NULL,
+    FOREIGN KEY (SpaceshipID) REFERENCES Spaceships(SpaceshipID)
+);
 
--- Insert some sample data into CrewMembers INSERT INTO CrewMembers (Name, Role, ExperienceLevel, AssignedSpaceshipID) VALUES ('John Doe', 'Captain', 'Expert', 1), ('Jane Smith', 'Engineer', 'Intermediate', 1), ('Bob Johnson', 'Scientist', 'Beginner', NULL);
+-- Insert some sample data into Spaceships
+INSERT INTO Spaceships (Name, Capacity, LaunchDate, Status) VALUES
+('Apollo', 5, '2024-01-01', 'Ready'),
+('Enterprise', 10, '2024-02-15', 'In Mission'),
+('Discovery', 8, '2024-03-10', 'Under Maintenance');
 
--- Insert some sample data into Missions INSERT INTO Missions (SpaceshipID, Destination, LaunchDate, Duration) VALUES (1, 'Moon', '2024-04-01', 30), (2, 'Mars', '2024-05-01', 60);
+-- Insert some sample data into CrewMembers
+INSERT INTO CrewMembers (Name, Role, ExperienceLevel, AssignedSpaceshipID) VALUES
+('John Doe', 'Captain', 'Expert', 1),
+('Jane Smith', 'Engineer', 'Intermediate', 1),
+('Bob Johnson', 'Scientist', 'Beginner', NULL);
 
--- Select data to verify the entries SELECT * FROM Spaceships; SELECT * FROM CrewMembers; SELECT * FROM Missions;
+-- Insert some sample data into Missions
+INSERT INTO Missions (SpaceshipID, Destination, LaunchDate, Duration) VALUES
+(1, 'Moon', '2024-04-01', 30),
+(2, 'Mars', '2024-05-01', 60);
+
+-- Select data to verify the entries
+SELECT * FROM Spaceships;
+SELECT * FROM CrewMembers;
+SELECT * FROM Missions;
 
 /////// the end of the sql script////////
 
@@ -91,6 +131,7 @@ Replace yourpassword with your actual MySQL root password or the password of the
 
 By following these steps, you should be able to set up the MySQL database for your Spaceship Travel System project successfully.
 
+
 ## Running the Application
 
 1. **Start the backend server:**
@@ -122,7 +163,10 @@ TOKEN=$(curl -X POST http://localhost:3000/generate-token -H "Content-Type: appl
 
 Now you can use this token in the Authorization header for protected routes:
 
-## Testing in PostsMan
+## Testing in PostsMan   
+
+### I have included a doumentation for postman (https://documenter.getpostman.com/view/27333474/2sA3XSALpk#9c9bc1c2-f0a0-4091-9a23-725ea4e979ca)
+### Remember to get the token from the broswer local stroage and paste in postman so you can acceses the api before doing any operation
 
 for Testing purpose in postman you need the token , you can get the token when you open the front-end page (you might need to refresh the page before doing that) of the app and press right click with mouse and inspect and then go to application storage to local storage and you will find there the Token that is need it for testing in the postman , note open postman  go to Authorization and choose the type to be Bearer Token then place the token After that you can use the protected routes and use it as much as you want.
 ```bash
