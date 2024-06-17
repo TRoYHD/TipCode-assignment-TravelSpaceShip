@@ -59,7 +59,7 @@ app.get('/get-session-data', (req, res) => {
 app.options('*', cors());
 
 // Apply rate limiter to all requests
-// app.use(rateLimiter);
+app.use(rateLimiter);
 
 // Apply JWT verification middleware to protected routes
 app.use('/spaceships', authMiddleware, spaceshipRoutes);
