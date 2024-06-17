@@ -11,7 +11,7 @@ git clone <repository_url>
 ```
 
 ## Environment Variables
-Create a `.env` file in the root of your project and add the following environment variables:
+Create a `.env` file in the root of your project and add the following environment variables: ( I have included the env file in this repo so you can skip this if you want , there is 2 env one for backend and one for front-end)
 
 ```plaintext
 DB_HOST=localhost
