@@ -41,6 +41,39 @@ npm install
 cd spaceship-travel-frontend
 npm install
 ```
+. Set up the database:
+
+Start your MySQL server.
+Create the database and tables by running the following SQL script in your MySQL CLI: ///////////////////////////start from here///////////////////
+-- Create the database CREATE DATABASE Spaceship_Travel_System;
+
+-- Use the database USE Spaceship_Travel_System;
+
+-- Create the Spaceships table CREATE TABLE Spaceships ( SpaceshipID INT PRIMARY KEY AUTO_INCREMENT, Name VARCHAR(100) NOT NULL, Capacity INT NOT NULL, LaunchDate DATE NOT NULL, Status ENUM('Ready', 'In Mission', 'Under Maintenance') NOT NULL );
+
+-- Create the CrewMembers table CREATE TABLE CrewMembers ( CrewMemberID INT PRIMARY KEY AUTO_INCREMENT, Name VARCHAR(100) NOT NULL, Role VARCHAR(50) NOT NULL, ExperienceLevel ENUM('Beginner', 'Intermediate', 'Expert') NOT NULL, AssignedSpaceshipID INT NULL, FOREIGN KEY (AssignedSpaceshipID) REFERENCES Spaceships(SpaceshipID) );
+
+-- Create the Missions table CREATE TABLE Missions ( MissionID INT PRIMARY KEY AUTO_INCREMENT, SpaceshipID INT NOT NULL, Destination ENUM('Moon', 'Mars', 'Jupiter') NOT NULL, LaunchDate DATE NOT NULL, Duration INT NOT NULL, FOREIGN KEY (SpaceshipID) REFERENCES Spaceships(SpaceshipID) );
+
+-- Insert some sample data into Spaceships INSERT INTO Spaceships (Name, Capacity, LaunchDate, Status) VALUES ('Apollo', 5, '2024-01-01', 'Ready'), ('Enterprise', 10, '2024-02-15', 'In Mission'), ('Discovery', 8, '2024-03-10', 'Under Maintenance');
+
+-- Insert some sample data into CrewMembers INSERT INTO CrewMembers (Name, Role, ExperienceLevel, AssignedSpaceshipID) VALUES ('John Doe', 'Captain', 'Expert', 1), ('Jane Smith', 'Engineer', 'Intermediate', 1), ('Bob Johnson', 'Scientist', 'Beginner', NULL);
+
+-- Insert some sample data into Missions INSERT INTO Missions (SpaceshipID, Destination, LaunchDate, Duration) VALUES (1, 'Moon', '2024-04-01', 30), (2, 'Mars', '2024-05-01', 60);
+
+-- Select data to verify the entries SELECT * FROM Spaceships; SELECT * FROM CrewMembers; SELECT * FROM Missions;
+
+/////// the end of the sql script////////
+
+Verify the Setup: After running the script, verify that the tables and sample data have been created correctly by running the following queries in your MySQL CLI:
+
+sql Copy code USE Spaceship_Travel_System; SELECT * FROM Spaceships; SELECT * FROM CrewMembers; SELECT * FROM Missions;
+
+Additional Notes Database Credentials: Ensure that your application's database configuration matches the credentials and database name you have set up. Update the .env file or the database configuration file accordingly. Error Handling: If you encounter any errors during the setup, make sure to check for typos and ensure that your MySQL server is running correctly. Permissions: If you're using a different MySQL user, make sure that the user has the necessary permissions to create databases and tables. Example .env File Configuration Here's an example of how your .env file might look:
+
+makefile Copy code DB_HOST=localhost DB_USER=root DB_PASS=yourpassword DB_NAME=Spaceship_Travel_System SECRET_KEY=TopSecretKey JWT_SECRET=TopTopSecretKey Replace yourpassword with your actual MySQL root password or the password of the MySQL user you're using.
+
+By following these steps, you should be able to set up the MySQL database for your Spaceship Travel System project successfully.
 
 ## Running the Application
 
